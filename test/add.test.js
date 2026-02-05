@@ -19,3 +19,11 @@ test("handles unknown amount of numbers", () => {
 test("supports new lines as delimiters", () => {
   expect(add("1\n2,3")).toBe(6);
 });
+
+test("supports custom delimiter", () => {
+  expect(add("//;\n1;2")).toBe(3);
+});
+
+test("ignores numbers greater than 1000", () => {
+  expect(add("2,1001")).toBe(2);
+});
