@@ -32,3 +32,15 @@ test("throws on negative numbers", () => {
   expect(() => add("1,-2")).toThrow("negatives not allowed: -2");
 });
 
+test("lists all negative numbers", () => {
+  expect(() => add("1,-2,-3")).toThrow("negatives not allowed: -2, -3");
+});
+
+test("supports multiple delimiters", () => {
+  expect(add("//[*][%]\n1*2%3")).toBe(6);
+});
+
+test("supports delimiter of any length", () => {
+  expect(add("//[***]\n1***2***3")).toBe(6);
+});
+

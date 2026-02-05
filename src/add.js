@@ -1,24 +1,37 @@
 function add(numbers) {
   if (numbers === "") return 0;
 
-  if (numbers < 0) throw `negatives not allowed: ${numbers}`;
-
-  let delimiter = /,|\n/;
+  let delimiters = [",", "\n"];
 
   if (numbers.startsWith("//")) {
     const [header, rest] = numbers.split("\n");
     numbers = rest;
-    delimiter = header[2];
+
+    const matches = header.match(/\[(.*?)\]/g);
+    delimiters = matches
+      ? matches.map(d => d.slice(1, -1)) // remove [ ]
+      : [header[2]];
   }
 
-  const splitOutput = numbers.split(delimiter).map(Number);
+  // Escape delimiters for regex
+  const escapedDelimiters = delimiters.map(d =>
+    d.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&")
+  );
 
-  const negatives = splitOutput.filter((n) => n < 0);
+  const delimiterRegex = new RegExp(escapedDelimiters.join("|"));
+
+  const splitOutput = numbers
+    .split(delimiterRegex)
+    .map(Number);
+
+  const negatives = splitOutput.filter(n => n < 0);
   if (negatives.length) {
     throw new Error(`negatives not allowed: ${negatives.join(", ")}`);
   }
 
-  return splitOutput.filter((n) => n <= 1000).reduce((a, b) => a + b, 0);
+  return splitOutput
+    .filter(n => n <= 1000)
+    .reduce((a, b) => a + b, 0);
 }
 
 module.exports = add;
